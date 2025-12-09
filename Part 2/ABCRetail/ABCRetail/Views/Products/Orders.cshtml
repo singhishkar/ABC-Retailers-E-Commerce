@@ -1,0 +1,32 @@
+﻿@model List<string>
+
+@{
+    ViewData["Title"] = "Orders";
+}
+
+<h2>Orders</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Message</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Count == 0)
+        {
+            <tr>
+                <td>No messages found.</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var message in Model)
+            {
+                <tr>
+                    <td>@message</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>

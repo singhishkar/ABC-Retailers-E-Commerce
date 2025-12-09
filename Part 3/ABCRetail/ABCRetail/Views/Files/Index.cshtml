@@ -1,0 +1,38 @@
+﻿@model IEnumerable<ABCRetail.Models.FileModel>
+
+@{
+    ViewData["Title"] = "File List";
+}
+
+<h2>Files</h2>
+
+@if (Model == null || !Model.Any())
+{
+    <p>No files found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Size</th>
+                <th>Last Modified</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var file in Model)
+            {
+                <tr>
+                    <td>@file.Name</td>
+                    <td>@file.Size</td>
+                    <td>@file.LastModified</td>
+                    <td>
+                        <a href="@Url.Action("DownloadFile", "Files", new { fileName = file.Name })" class="btn btn-primary">Download</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

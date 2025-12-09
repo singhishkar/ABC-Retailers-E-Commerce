@@ -1,0 +1,57 @@
+﻿@model ABCRetail.Models.Product
+
+<h2>Edit Product</h2>
+
+<form asp-action="EditProduct" method="post" enctype="multipart/form-data" style="max-width: 600px; margin: auto;">
+    <!-- Hidden fields for product identification -->
+    <input type="hidden" name="PartitionKey" value="@Model.PartitionKey" />
+    <input type="hidden" name="RowKey" value="@Model.RowKey" />
+
+    <!-- Form group for product name -->
+    <div class="form-group">
+        <label for="productName">Product Name</label>
+        <input type="text" id="productName" name="ProductName" class="form-control" value="@Model.ProductName" placeholder="Enter product name" required />
+    </div>
+
+    <!-- Form group for description -->
+    <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="Description" class="form-control" placeholder="Enter product description">@Model.Description</textarea>
+    </div>
+
+    <!-- Form group for location -->
+    <div class="form-group">
+        <label for="location">Location</label>
+        <input type="text" id="location" name="Location" class="form-control" value="@Model.Location" placeholder="Enter location" />
+    </div>
+
+    <!-- Form group for price -->
+    <div class="form-group">
+        <label for="price">Price ($)</label>
+        <input type="number" id="price" name="Price" class="form-control" step="0.01" value="@Model.price" placeholder="Enter product price" required />
+    </div>
+
+    <!-- Display current image if available -->
+    <div class="form-group">
+        <label>Current Image</label>
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <div>
+                <img src="@Model.ImageUrl" alt="Product Image" style="max-width: 200px; margin-top: 10px;" />
+            </div>
+        }
+    </div>
+
+    <!-- Form group for changing image -->
+    <div class="form-group">
+        <p></p>
+        <label for="file">Change Image</label>
+        <input type="file" id="file" name="file" class="form-control-file" />
+        <p></p>
+    </div>
+
+    <!-- Submit button -->
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Update Product</button>
+    </div>
+</form>

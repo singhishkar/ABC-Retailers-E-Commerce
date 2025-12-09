@@ -1,0 +1,18 @@
+﻿@model ABCRetail.Models.CartViewModel
+
+<h2>Order Product</h2>
+
+<form asp-action="ConfirmOrder" method="post">
+    <div class="form-group">
+        <label>Product Name: @Model.Product.ProductName</label>
+    </div>
+    <div class="form-group">
+        <label>Price: @Model.Product.price</label>
+    </div>
+    <div class="form-group">
+        <label for="Quantity">Quantity</label>
+        <input type="number" class="form-control" id="Quantity" name="Quantity" value="1" min="1" />
+    </div>
+    <input type="hidden" asp-for="Product.RowKey" />
+    <button type="submit" class="btn btn-success">Confirm Order</button>
+</form>

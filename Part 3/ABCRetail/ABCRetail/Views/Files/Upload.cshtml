@@ -1,0 +1,30 @@
+﻿@{
+    ViewData["Title"] = "Upload File";
+}
+
+<div class="container mt-4">
+    <h2>@ViewData["Title"]</h2>
+
+    <p>Welcome to the file upload page. Please use the form below to upload your files. Make sure your file meets the required specifications.</p>
+
+    <form asp-action="Upload" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="file">Select File</label>
+            <p></p>
+            <input type="file" name="file" id="file" class="form-control-file" />
+            <small class="form-text text-muted">Accepted file types: PDF, DOCX, JPG, PNG. Maximum file size: 10MB.</small>
+        </div>
+
+        <p></p>
+
+        <button type="submit" class="btn btn-primary">Upload File</button>
+    </form>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-info mt-3">
+            @TempData["Message"]
+        </div>
+    }
+
+</div>
