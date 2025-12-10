@@ -209,7 +209,7 @@ The application will launch. You should see a message in the console indicating 
 
 The application connects to a **SQL database**. You must configure the connection string in the `appsettings.json` file. Create this file if it doesn't exist, and add the configuration using a placeholder structure.
 
-> **Note**: If you are running locally, you will typically use a connection string pointing to a local SQL Server instance (e.g., using LocalDB).
+> ⚠️ **Note**: If you are running locally, you will typically use a connection string pointing to a local SQL Server instance (e.g., using LocalDB).
 
 #### 4. Apply Database Migrations
 
