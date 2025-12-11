@@ -1,0 +1,109 @@
+﻿@model ProductDisplayModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="row">
+    <div class="col-lg-10 mx-auto text-center">
+        <div class="section-title">
+            <h1>Crafting Beauty, One Piece at a Time</h1>
+            <p class="text-muted">
+                The transformative power of artisanship: Each piece tells a story of dedication, skill, and cultural heritage.
+                From intricately detailed art pieces to delicately carved sculptures, every creation is a testament to the passion and creativity of our artisans.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="my-2">
+    <form asp-action="Index" class="row row-cols-lg-auto g-3 align-items-center">
+        <div class="col-12">
+            <label class="visually-hidden" for="categoryId">Category</label>
+            <select class="form-select" id="categoryId" name="categoryId">
+                <option selected>Category</option>
+                @if (Model.Categories != null)
+                {
+                    @foreach (var category in Model.Categories)
+                    {
+                        <option selected="@(category.Id == Model.CategoryId)" value="@category.Id">@category.CategoryName</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="col-12">
+            <label class="visually-hidden" for="sterm">Search by product name</label>
+            <div class="input-group">
+                <div class="input-group-text"></div>
+                <input type="text" class="form-control" value="@Model.STerm" id="sterm" name="sterm" placeholder="Search by product name">
+            </div>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="/Products/Index" class="btn btn-dark">Reset</a>
+        </div>
+    </form>
+</div>
+
+@* <div class="container mx-auto mt-4">
+    <div class="row"> *@
+<div class="container mx-auto mt-4">
+    <div class="row">
+        @if (Model.Products != null)
+        {
+            @foreach (var product in Model.Products)
+            {
+                <div class="col-md-4">
+                    <div class="card" style="width: 18rem;">
+                        <img src="/images/@product.Image" class="card-img-top" style="width:100%" alt="@product.ProductName" />
+                        @* <img src="/images/@product.Image" class="card-img-top" style="width:100%;height:180px" alt="@product.ProductName" /> *@
+                        <div class="card-body">
+                            <h5 class="card-title">@product.ProductName</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">Price: @product.Price.ToString("C")</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">Quantity Available: @product.Quantity.ToString()</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">Category: @product.CategoryName</h6>
+                            <p class="card-text">@product.Description</p>
+                            @if (product.Quantity > 0)
+                            {
+                                <button type="button" onclick="add(@product.Id)" class="btn btn-primary btn-full-width">Add to cart</button>
+                            }
+                            else
+                            {
+                                <span class="out-of-stock">Out of stock</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            }
+        }
+    </div>
+</div>
+
+
+@section Scripts {
+    <script>
+        async function add(productId) {
+            var usernameEl = document.getElementById("username");
+            if (usernameEl == null) {
+                window.location.href = "/Identity/Account/Login";
+            }
+            try {
+                var response = await fetch(`/Cart/AddItem?productId=${productId}`);
+                if (response.status == 200) {
+                    var result = await response.json();
+                    var cartCountEl = document.getElementById("cartCount");
+                    cartCountEl.innerHTML = result;
+                    window.location.href = "#cartCount";
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    </script>
+}
+
+

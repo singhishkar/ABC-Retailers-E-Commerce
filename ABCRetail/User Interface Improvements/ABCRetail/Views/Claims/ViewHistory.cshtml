@@ -1,0 +1,82 @@
+﻿@model IEnumerable<ABCRetail.Models.Claims>
+
+<h2 class="text-center mb-4">Claim History</h2>
+
+@if (Model.Any())
+{
+    <div class="table-container">
+        <table class="table table-hover table-bordered">
+            <thead>
+                <tr>
+                    <th>File ID</th>
+                    <th>File Name</th>
+                    <th>Description</th>
+                    <th>Date Submitted</th>
+                    <th>Files</th>
+                </tr>
+            </thead>
+            <tbody id="claimsTableBody">
+                @foreach (var claim in Model)
+                {
+                    <tr class="claim-row">
+                        <td>@claim.Id</td>
+                        <td>@claim.DocumentName</td>
+                        <td>@claim.DescriptionOfWork</td>
+                        <td>@claim.DateSubmitted.ToString("yyyy-MM-dd")</td>
+
+                        <td>
+                            @if (claim.File.Any())
+                            {
+                                <ul style="list-style: none; padding: 0;">
+                                    @foreach (var file in claim.File)
+                                    {
+                                        <li class="file-item">
+                                            <span class="file-name">@file.FileName</span>
+                                            <div class="download-button mt-2">
+                                                <a href="@Url.Action("DownloadFile", "Claims", new { id = file.FileId })"
+                                                   class="btn btn-primary btn-sm">Download</a>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <p>No files attached</p>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <p class="alert alert-warning">No claims found.</p>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+
+        $('#startDate, #endDate').on('change', function () {
+            var startDate = new Date($('#startDate').val());
+            var endDate = new Date($('#endDate').val());
+
+            if (!isNaN(startDate.getTime()) && !isNaN(endDate.getTime())) {
+                $('#claimsTableBody tr').filter(function () {
+                    var claimDate = new Date($(this).find('td:eq(1)').text());
+                    $(this).toggle(claimDate >= startDate && claimDate <= endDate);
+                });
+            }
+        });
+
+        $('#resetButton').click(function () {
+            $('#startDate').val('');
+            $('#endDate').val('');
+
+            $('#claimsTableBody tr').show();
+        });
+    });
+</script>

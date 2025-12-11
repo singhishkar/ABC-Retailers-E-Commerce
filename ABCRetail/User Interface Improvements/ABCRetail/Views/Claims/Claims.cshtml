@@ -1,0 +1,121 @@
+﻿@model ABCRetail.Models.Claims
+
+@{
+    ViewData["Title"] = "Submit Claims";
+}
+
+<div class="row">
+    <div class="col-lg-8 mx-auto text-center">
+        <div class="section-title">
+            <h1 class="mb-3">Upload Files</h1>
+            <p class="text-muted">Easily upload your documents to complete your contracts and log file submissions.</p>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <form asp.action="SubmitClaim" method="post" enctype="multipart/form-data" id="claimForm" class="shadow p-4 rounded bg-dark">
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <label asp-for="DocumentName" class="form-label">File Name</label>
+                <textarea asp-for="DocumentName" class="form-control" required placeholder="Provide the name of the file you are uploading"></textarea>
+                <span asp-validation-for="DocumentName" class="text-danger"></span>
+            </div>
+            <div class="col-md-12">
+                <p></p>
+                <label for="supportingDocument" class="form-label">Upload File Document</label>
+                <p class="small text-muted">Please upload your relevant files. Accepted formats include PDF, JPG, and DOC.</p>
+                <input type="file" name="supportingDocument" class="form-control" id="supportingDocument" />
+            </div>
+            <div class="col-md-12">
+                <p></p>
+                <label asp-for="DescriptionOfWork" class="form-label">Description of Work</label>
+                <textarea asp-for="DescriptionOfWork" class="form-control" required placeholder="Provide a brief description of the work done"></textarea>
+                <span asp-validation-for="DescriptionOfWork" class="text-danger"></span>
+            </div>
+        </div>
+
+        <input asp-for="UserID" type="hidden" />
+        <input asp-for="ClaimStatus" type="hidden" />
+
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary w-50">Upload File</button>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+        <script>
+            $(document).ready(function () {
+                $('#claimForm').on('submit', function (event) {
+                    event.preventDefault();
+
+                    toastr.clear();
+
+                    // Validate required fields
+                    var isValid = true;
+                    $('#claimForm input[required], #claimForm textarea[required]').each(function () {
+                        if ($(this).val().trim() === '') {
+                            isValid = false;
+                            $(this).addClass('is-invalid'); // Highlight invalid fields
+                        } else {
+                            $(this).removeClass('is-invalid');
+                        }
+                    });
+
+                    if (!isValid) {
+                        toastr.error('Please fill in all required fields.', 'Form Error', {
+                            "positionClass": "toast-top-right",
+                            "timeOut": "5000",
+                            "closeButton": true,
+                            "progressBar": true
+                        });
+                        return; // Prevent further execution
+                    }
+
+                    // Validate file input for specific extensions
+                    var fileInput = document.getElementById("supportingDocument");
+                    var file = fileInput.files[0];
+
+                    if (file) {
+                        var validExtensions = [".jpg", ".jpeg", ".png", ".docx", ".xlsx", ".pdf"];
+                        var fileName = file.name.toLowerCase();
+                        var fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+
+                        if (!validExtensions.includes(fileExtension)) {
+                            toastr.error('Invalid file type! Attach documents that are .jpg, .jpeg, .png, .docx, .xlsx, .pdf.', 'File Error', {
+                                "positionClass": "toast-top-right",
+                                "timeOut": "5000",
+                                "closeButton": true,
+                                "progressBar": true
+                            });
+                            return; // Prevent form submission
+                        }
+                    }
+
+                    setTimeout(function () {
+                        toastr.success('File has been uploaded successfully!', 'Upload Successful', {
+                            "positionClass": "toast-top-right",
+                            "timeOut": "5000",
+                            "closeButton": true,
+                            "progressBar": true
+                        });
+
+                        setTimeout(function () {
+                            $('#claimForm')[0].submit(); // Submit the form
+                        }, 1000);
+                    }, 1000);
+                });
+            });
+        </script>
+
+}

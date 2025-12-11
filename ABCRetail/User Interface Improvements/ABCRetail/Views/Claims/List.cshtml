@@ -1,0 +1,173 @@
+﻿@model IEnumerable<ABCRetail.Models.Claims>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "List";
+}
+
+<h2 class="text-center mb-4">List of Claims</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>User ID</th>
+            <th>File Name</th>
+            <th>Description</th>
+            <th>File</th> <!-- Optional column for file links -->
+            <th>Actions</th> <!-- Added header for Approve/Reject buttons -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var claim in Model)
+        {
+            <tr>
+                <td>@claim.Id</td>
+                <td>@claim.UserID</td>
+                <td>@claim.DocumentName</td>
+                <td>@claim.DescriptionOfWork</td>
+                <td>
+                    @if (claim.SupportingDocuments != null)
+                    {
+                        <a href="@Url.Action("FileDownload", new { id = claim.Id })"
+                           class="btn btn-primary btn-sm mt-2">Download</a>
+                    }
+
+                    else
+                    {
+                        <p>N/A</p> <!-- Removed extra quotation marks -->
+                    }
+                <td>
+                    <select class="form-control status-dropdown" data-claim-id="@claim.Id">
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                </td>
+                <!-- Approve or reject buttons -->
+              @*<td>
+                    <a href="@Url.Action("Approve", new { id = claim.Id })" class="btn btn-success">Approve</a>
+                    <a href="@Url.Action("Reject", new { id = claim.Id })" class="btn btn-danger">Reject</a>
+                </td> *@
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+@*     <!-- Design the toastr notifications -->
+    <style>
+        .toast-custom {
+            font-size: 20px;
+            width: 400px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            var message = '@TempData["Message"]';
+            var messageType = '@TempData["MessageType"]';
+
+            if (message) {
+                if (messageType === 'success') {
+                    toastr.success(message, 'Success', {
+                        "positionClass": "toast-top-right",
+                        "timeOut": "5000",
+                        "closeButton": true,
+                        "progressBar": true
+                    });
+                } else if (messageType === 'error') {
+                    toastr.error(message, 'Error', {
+                        "positionClass": "toast-top-right",
+                        "timeOut": "5000",
+                        "closeButton": true,
+                        "progressBar": true
+                    });
+                }
+            } // Closed the if condition correctly
+        });
+    </script> *@
+
+        <!-- Design the toastr notifications -->
+    <style>
+        .toast-custom {
+            font-size: 20px;
+            width: 400px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            var message = '@TempData["Message"]';
+            var messageType = '@TempData["MessageType"]';
+
+            if (message) {
+                if (messageType === 'success') {
+                    toastr.success(message, 'Success', {
+                        "positionClass": "toast-top-right",
+                        "timeOut": "5000",
+                        "closeButton": true,
+                        "progressBar": true
+                    });
+                } else if (messageType === 'error') {
+                    toastr.error(message, 'Error', {
+                        "positionClass": "toast-top-right",
+                        "timeOut": "5000",
+                        "closeButton": true,
+                        "progressBar": true
+                    });
+                }
+            }
+
+            // Handle status update
+            $('.status-dropdown').change(function () {
+                var claimId = $(this).data('claim-id');
+                var newStatus = $(this).val();
+
+                $.ajax({
+                    url: '@Url.Action("UpdateClaimStatus", "Claims")', // Adjust the URL to your controller and action
+                    type: 'POST',
+                    data: {
+                        claimId: claimId,
+                        newStatus: newStatus
+                    },
+                    success: function (response) {
+                        var toastrOptions = {
+                            positionClass: 'toast-top-right',
+                            timeOut: 5000,
+                            closeButton: true,
+                            progressBar: true
+                        };
+
+                        switch (newStatus) {
+                            case 'Pending':
+                                toastr.warning('File status updated to: ' + newStatus, 'Pending', toastrOptions);
+                                break;
+                            case 'Approved':
+                                toastr.success('File status updated to: ' + newStatus, 'Approved', toastrOptions);
+                                break;
+                            case 'Rejected':
+                                toastr.error('File status updated to: ' + newStatus, 'Rejected', toastrOptions);
+                                break;
+                            default:
+                                toastr.info('File status updated to: ' + newStatus, 'Updated', toastrOptions);
+                                break;
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        toastr.error('Failed to update file status. Please try again.', 'Error', {
+                            positionClass: 'toast-top-right',
+                            timeOut: 5000,
+                            closeButton: true,
+                            progressBar: true
+                        });
+                        console.error(error);
+                    }
+                });
+            });
+        });
+    </script>
+
+}
